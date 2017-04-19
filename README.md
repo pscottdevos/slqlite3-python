@@ -7,10 +7,10 @@ Based on the embedding code at https://docs.python.org/2/extending/embedding.htm
 
 Below, ```module-path``` refers to a path in your PYTHONPATH at the top of
 your sqlite3 extensions. You can leave it off, but then users of sqlite3 will
-have access to **every callable in your project including imports**. This would
-be **very unsafe!**
+have access to ***every callable in your project including imports***. This would
+be ***very unsafe!***
 
-Also, for safety, **put all imports inside your function modules** or sqlite3
+Also, for safety, ***put all imports inside your function modules*** or sqlite3
 users will have access to anything you import!
 
 For example:
@@ -24,7 +24,7 @@ def regexp(regex, value):
   return result
 ```
 
-Do **NOT** do this:
+Do ***NOT*** do this:
 
 ```
 import re
@@ -33,7 +33,7 @@ def regexp(regex, value):
   return result
 ```
 
-**YOU HAVE BEEN WARNED!!!**
+***YOU HAVE BEEN WARNED!!!***
 
 ### Linux
 
