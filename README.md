@@ -66,3 +66,10 @@ To use:
 ```
 $ env PYTHONPATH=<project path> sqlite3
 
+## Limitations
+
+Currently you can only pass a single string value to Python from sqlite3
+and you can only return a single string value back to sqlite3 from Python.
+
+If you need to pass more values or different types, you will have to
+encode them in your strings and decode them at the other end.
