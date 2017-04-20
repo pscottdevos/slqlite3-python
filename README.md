@@ -3,7 +3,7 @@ An sqlite3 extension that allows calling of python functions
 
 Based on the embedding code at https://docs.python.org/2/extending/embedding.html
 
-## Compiling and Installing
+## Build and Install
 
 Below, ```module-path``` refers to a path in your PYTHONPATH at the top of
 your sqlite3 extensions. You can leave it off, but then users of sqlite3 will
