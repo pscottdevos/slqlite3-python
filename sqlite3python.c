@@ -24,13 +24,14 @@ static void call_python(
     }
 
     pName = PyString_FromString((char *)(void *)sqlite3_value_text(argv[0]));
-    #ifdef PYTHONPATH
-      pPath = PyString_FromString(PYTHONPATH);
+    #ifdef EXT_PACKAGE
+      const char *cPackage = EXT_PACKAGE;
+      pPath = PyString_FromString(cPackage);
       pFormat = PyString_FromString("%s.%s");
       pArgs = PyTuple_New(2);
       PyTuple_SetItem(pArgs, 0, pPath);
       PyTuple_SetItem(pArgs, 1, pName);
-      pName = PyString_Format(PyString_FromString("%s.%s"), pArgs);
+      pName = PyString_Format(pFormat, pArgs);
       Py_DECREF(pPath);
       Py_DECREF(pFormat);
       Py_DECREF(pArgs);
