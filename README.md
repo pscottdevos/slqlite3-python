@@ -6,15 +6,23 @@ https://docs.python.org/2/extending/embedding.html
 
 ## Build and Install
 
-Below, ```package-path``` refers to a path in your PYTHONPATH at the top of
-your sqlite3 extensions. You can leave it off, but then users of sqlite3 will
-have access to ***every callable in your project including imports***. This
-would be ***very unsafe!***
+Below, ```module-name``` refers to a module in your PYTHONPATH at the top of
+your sqlite3 extensions. If you leave it off, the default value of
+"sqlite3_extensions" will be used.
 
-Also, for safety, ***put all imports inside your function defitions*** or
-sqlite3 users will have access to anything you import!
+If you need to break your module into a package, provide the name of the
+package for ```module-name``` and import all of your functions into
+```<module-name>/__init__.py```.
 
-For example:
+Do ***NOT*** put any imports in the top level of your module
+(or ```__init__.py``` when using a package) or those imports will be
+callable from sqlite3 which would be ***very unsafe!!!***
+
+Either import your names explicitly into your module (or ```__init__.py```)
+or ***place all imports inside your function defitions***. Failure to heed
+this advice will give sqlite3 users access to anything you import!
+
+Example:
 
 Do this:
 
@@ -34,6 +42,14 @@ def regexp(regex, value):
   return result
 ```
 
+Do this:
+
+from my_package.my_module import a, b, c
+
+Do ***NOT*** do this:
+
+from my_package.my_module import *
+
 ***YOU HAVE BEEN WARNED!!!***
 
 ### Linux
@@ -41,7 +57,7 @@ def regexp(regex, value):
 On Linux compile with:
 
 ```
-gcc -DEXT_PACKAGE='"<package-path>"' -g -I/usr/include/python2.7 -fPIC -Wall \
+gcc -DEXT_MODULE='"<module-path>"' -g -I/usr/include/python2.7 -fPIC -Wall \
     -Werror -shared -lpcre -lsqlite3 -lpython2.7 \
     -olibsqlite3python.so sqlite3python.c
 ```
@@ -53,7 +69,7 @@ and copy libsqlite3python.so to a shared library directory (/usr/lib64).
 On Mac compile with:
 
 ```
-gcc -DEXT_PACKAGE='"<package-path>"' -g -I/usr/include/python2.7 -fPIC -Wall \
+gcc -DEXT_MODULE='"<module-path>"' -g -I/usr/include/python2.7 -fPIC -Wall \
     -Werror -shared -lpcre -lsqlite3 -lpython2.7 \
     -olibsqlite3python.dylib sqlite3python.c
 ```
@@ -66,12 +82,33 @@ To use:
 
 ```
 $ env PYTHONPATH=<project path> sqlite3
+SQLite version 3.16.2 2017-01-06 16:32:41
+Enter ".help" for usage hints.
+Connected to a transient in-memory database.
+Use ".open FILENAME" to reopen on a persistent database.
+sqlite> select load_extension('libsqlite3python');
+
+sqlite> select call_python('<function_name>, 'value');
+```
+
+Example using the sample functions:
+
+$ env PYTHONPATH=. sqlite3
+SQLite version 3.16.2 2017-01-06 16:32:41
+Enter ".help" for usage hints.
+Connected to a transient in-memory database.
+Use ".open FILENAME" to reopen on a persistent database.
+sqlite> select load_extension('libsqlite3python');
+
+sqlite> select call_python('string_length', 'abc');
+The string is abc
+3
+sqlite> select call_python('double_string', 'abc');
+The string is abc
+abcabc
+
 
 ## Limitations
-
-package-path must be 11 characters or less or the import crashes with a
-seg fault. I don't know why. If someone could figure that out for me I'll
-owe you a beer.
 
 Currently you can only pass a single string value to Python from sqlite3
 and you can only return a single string value back to sqlite3 from Python.
